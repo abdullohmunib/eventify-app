@@ -1,0 +1,167 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/app}" lang="en"
+    xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Eventify - Detail Event</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="space-y-8" th:if="${event != null}">
+            <div class="swiper rounded-lg overflow-hidden shadow">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img th:src="${event.posterUrl != null and !#strings.isEmpty(event.posterUrl)} ? ${event.posterUrl} : 'https://placehold.co/480x120'"
+                            th:alt="${event.judul}" class="w-full h-auto">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <div class="space-y-3">
+                <h1 class="text-3xl font-bold text-primary" th:text="${event.judul}">Event Title</h1>
+                <p class="text-gray-600 text-sm">
+                    <i class="ti ti-clock"></i>
+                    <span th:text="${event.formattedTanggalAcara}">Event Date</span>
+                </p>
+                <p class="text-gray-700" th:text="${event.deskripsi}">Event Description</p>
+                <p class="text-2xl font-bold text-green-600"
+                    th:text="${event.hargaTiket != null ? 'Rp ' + #numbers.formatDecimal(event.hargaTiket, 0, 'COMMA', 2, 'DEFAULT') : 'Gratis'}">
+                    Event Price</p>
+                <p class="text-sm text-gray-600">Kuota Tersisa: <span class="font-semibold"
+                        th:text="${event.kuotaTersisa}">0</span> / <span th:text="${event.kuotaTotal}">0</span></p>
+
+                <!-- Check if user is logged in -->
+                <button th:if="${session.token != null}" type="button" data-modal-target="purchase-modal"
+                    data-modal-toggle="purchase-modal"
+                    class="w-full block text-center text-white bg-primary hover:bg-primary/80 focus:ring-4 focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 transition-all">
+                    Beli Tiket Sekarang
+                </button>
+
+                <a th:unless="${session.token != null}" href="/login"
+                    class="w-full block text-center text-white bg-primary hover:bg-primary/80 focus:ring-4 focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 transition-all">
+                    Login untuk Beli Tiket
+                </a>
+            </div>
+        </div>
+
+        <!-- Purchase Modal -->
+        <div id="purchase-modal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 rounded-t">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            Pembelian Tiket
+                        </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                            data-modal-hide="purchase-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-4 md:p-5 space-y-4">
+                        <form id="purchaseForm">
+                            <input type="hidden" id="eventId" th:value="${event.eventId}">
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Event</label>
+                                <p class="text-gray-900 font-semibold" th:text="${event.judul}">Event Name</p>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Harga per Tiket</label>
+                                <p class="text-gray-900 font-semibold"
+                                    th:text="${event.hargaTiket != null ? 'Rp ' + #numbers.formatDecimal(event.hargaTiket, 0, 'COMMA', 0, 'POINT') : 'Gratis'}">
+                                    Price</p>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">Jumlah
+                                    Tiket</label>
+                                <input type="number" id="quantity" name="quantity" min="1" value="1"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                                    required>
+                            </div>
+                            <div>
+                                <button type="submit" id="submitPurchase"
+                                    class="text-white bg-primary hover:bg-primary/80 focus:ring-4 focus:outline-none focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                    Submit
+                                </button>
+                                <button type="button"
+                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100"
+                                    data-modal-hide="purchase-modal">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-8" th:unless="${event != null}">
+            <div class="text-center py-12">
+                <h2 class="text-2xl font-bold text-gray-800">Event Tidak Ditemukan</h2>
+                <p class="text-gray-600 mt-2">Event yang Anda cari tidak ditemukan.</p>
+            </div>
+        </div>
+    </section>
+
+    <script layout:fragment="script">
+        var swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+
+        $(document).ready(function () {
+            $("#purchaseForm").on("submit", function (e) {
+                e.preventDefault();
+                var eventId = parseInt($("#eventId").val());
+                var quantity = parseInt($("#quantity").val());
+                
+                // Validasi input
+                if (!eventId || eventId <= 0) {
+                    alert("Event ID tidak valid");
+                    return;
+                }
+                if (!quantity || quantity <= 0) {
+                    alert("Jumlah tiket harus lebih dari 0");
+                    return;
+                }
+                
+                $.ajax({
+                    url: "/user/orders/create",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        eventId: eventId,
+                        quantity: quantity
+                    }),
+                    success: function (response) {
+                        window.location.href = "/user/orders";
+                    },
+                    error: function (xhr) {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Gagal membeli tiket',
+                            text: 'Terjadi kesalahan saat pembelian tiket. Silakan coba lagi.',
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

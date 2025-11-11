@@ -1,0 +1,25 @@
+app:
+  client-origin: ${CLIENT_URL} # Frontend URL
+
+spring:
+  application:
+    name: serverapp
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+security:
+  jwt:
+    secret-key: ${SECRET_KEY}
+    access-expire-ms: ${ACCESS_TOKEN_EXPIRE_MS}
+    refresh-expire-ms: ${REFRESH_TOKEN_EXPIRE_MS}
+
+server:
+  port: ${PORT_SERVER} # Backend server port

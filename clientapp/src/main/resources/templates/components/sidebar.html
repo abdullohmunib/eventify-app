@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar</title>
+</head>
+
+<body>
+  <aside th:fragment="sidebar" id="logo-sidebar"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-4 md:pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0"
+    aria-label="Sidebar">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+      <a th:href="@{/}" class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-lg bg-primary flex items-center justify-center text-white font-extrabold text-xl">
+          E
+        </div>
+        <div>
+          <div class="text-lg font-semibold">Eventify</div>
+          <div class="text-xs text-slate-500">Sistem Pembelian Tiket Online</div>
+        </div>
+      </a>
+      <ul th:if="${session.role} == 'ADMIN'" class="space-y-2 font-medium">
+        <li>
+          <a th:href="@{dashboard}"
+            th:classappend="${isActive} == 'dashboard' ? 'text-white bg-primary' : 'text-gray-900 hover:text-white hover:bg-primary'"
+            class="flex items-center p-2 rounded-lg group font-semibold">
+            <i th:classappend="${isActive} == 'dashboard' ? 'text-white' : 'text-gray-900 group-hover:text-white'"
+              class="ti ti-table-filled text-2xl font-semibold"></i>
+            <span class="text-sm ms-2">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a th:href="@{users}"
+            th:classappend="${isActive} == 'users' ? 'text-white bg-primary' : 'text-gray-900 hover:text-white hover:bg-primary'"
+            class="flex items-center p-2 rounded-lg group font-semibold">
+            <i th:classappend="${isActive} == 'users' ? 'text-white' : 'text-gray-900 group-hover:text-white'"
+              class="ti ti-users text-2xl font-semibold"></i>
+            <span class="text-sm ms-2">Kelola User</span>
+          </a>
+        </li>
+        <li>
+          <a th:href="@{events}"
+            th:classappend="${isActive} == 'events' ? 'text-white bg-primary' : 'text-gray-900 hover:text-white hover:bg-primary'"
+            class="flex items-center p-2 rounded-lg group font-semibold">
+            <i th:classappend="${isActive} == 'events' ? 'text-white' : 'text-gray-900 group-hover:text-white'"
+              class="ti ti-confetti-filled text-2xl font-semibold"></i>
+            <span class="text-sm ms-2">Kelola Event</span>
+          </a>
+        </li>
+        <li>
+          <a th:href="@{orders}"
+            th:classappend="${isActive} == 'orders' ? 'text-white bg-primary' : 'text-gray-900 hover:text-white hover:bg-primary'"
+            class="flex items-center p-2 rounded-lg group font-semibold">
+            <i th:classappend="${isActive} == 'orders' ? 'text-white' : 'text-gray-900 group-hover:text-white'"
+              class="ti ti-shopping-cart-filled text-2xl font-semibold"></i>
+            <span class="text-sm ms-2">Kelola Orders</span>
+          </a>
+        </li>
+        <li>
+          <a th:href="@{etickets}"
+            th:classappend="${isActive} == 'etickets' ? 'text-white bg-primary' : 'text-gray-900 hover:text-white hover:bg-primary'"
+            class="flex items-center p-2 rounded-lg group font-semibold">
+            <i th:classappend="${isActive} == 'etickets' ? 'text-white' : 'text-gray-900 group-hover:text-white'"
+              class="ti ti-ticket text-2xl font-semibold"></i>
+            <span class="text-sm ms-2">Kelola E-Ticket</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+</body>
+
+</html>

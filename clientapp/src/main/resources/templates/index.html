@@ -1,0 +1,116 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/app}" lang="en"
+    xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Eventify - Home</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="space-y-6">
+            <!-- Welcome message for logged-in users -->
+            <div th:if="${isLoggedIn}">
+                <h1 class="text-2xl font-semibold">Selamat datang kembali, <span class="text-primary" th:text="${userName}"></span>!</h1>
+                <p class="text-gray-600 text-sm">Berikut adalah daftar event yang mungkin kamu minati.</p>
+            </div>
+
+            <div class="swiper">
+                <div class="swiper-wrapper rounded-lg">
+                    <!-- Slides -->
+                    <div class="swiper-slide aspect-[37/10]">
+                        <img src="img/1.png" alt="Slide 1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="swiper-slide aspect-[37/10]">
+                        <img src="img/2.png" alt="Slide 1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="swiper-slide aspect-[37/10]">
+                        <img src="img/3.png" alt="Slide 1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="swiper-slide aspect-[37/10]">
+                        <img src="img/4.png" alt="Slide 1" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <form class="max-w-full mx-auto">
+                <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                    </div>
+                    <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 
+                       focus:ring-primary/90 focus:border-primary/90" placeholder="Search Events..."
+                        required />
+                    <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary hover:bg-primary/80 
+                       focus:ring-4 focus:outline-none focus:ring-primary/30 
+                       font-medium rounded-lg text-sm px-4 py-2">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <h1 class="text-2xl font-semibold mt-6 mb-4">Daftar Event</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <th:block th:if="${events != null and !events.isEmpty()}">
+                    <th:block th:each="event : ${events}">
+                        <a th:href="@{/detail/{slug}(slug=${event.slug})}"
+                            class="card p-0 overflow-hidden transform transition hover:-translate-y-2">
+                            <img class="event-img w-full h-full object-cover"
+                                th:src="${event.posterUrl != null and !#strings.isEmpty(event.posterUrl)} ? ${event.posterUrl} : 'https://placehold.co/480x480'"
+                                th:alt="${event.judul}" />
+                            <div class="p-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-full">
+                                        <h3 class="font-semibold text-lg" th:text="${event.judul}">Title</h3>
+                                        <div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                                            <span th:text="${event.formattedTanggalAcara}">Date</span>
+                                            <span class="h-4 w-px bg-slate-300"></span>
+                                            <span th:text="${event.lokasi}">Location</span>
+                                        </div>
+                                        <span class="bg-primary rounded-lg px-4 py-2 text-xs text-white"
+                                            th:text="${event.kuotaTersisa} + ' Tersisa'"></span>
+                                    </div>
+                                </div>
+                                <p class="text-slate-600 mt-3 line-clamp-3 text-sm" th:text="${event.deskripsi}">
+                                    Description</p>
+                            </div>
+                        </a>
+                    </th:block>
+                </th:block>
+
+                <th:block th:unless="${events != null and !events.isEmpty()}">
+                    <div class="col-span-full text-center py-12">
+                        <h2 class="text-2xl font-bold text-gray-800">Tidak Ada Event</h2>
+                        <p class="text-gray-600 mt-2">Belum ada event yang tersedia saat ini.</p>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </section>
+
+    <script layout:fragment="script">
+        var swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            effect: 'slide',
+        });
+    </script>
+</body>
+
+</html>

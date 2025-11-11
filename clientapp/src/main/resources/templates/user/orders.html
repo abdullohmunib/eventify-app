@@ -1,0 +1,109 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/app}" lang="en"
+    xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Eventify - Order</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-semibold">Daftar Pesanan Saya</h1>
+            </div>
+
+            <div th:if="${#lists.isEmpty(orders)}" class="text-center py-12">
+                <div class="text-gray-400 mb-4">
+                    <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">Tidak ada pesanan</h3>
+                <p class="mt-1 text-gray-500">Anda belum memiliki pesanan apapun.</p>
+                <div class="mt-6">
+                    <a th:href="@{/}"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none">
+                        Jelajahi Event
+                    </a>
+                </div>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(orders)}" class="space-y-4">
+                <div th:each="order : ${orders}" class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold">Order #<span th:text="${order.orderId}"></span></h3>
+                            <p class="text-gray-600 text-sm">Tanggal: <span
+                                    th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}"></span></p>
+                        </div>
+                        <span th:class="${'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' + 
+                            (#strings.equals(order.statusPembayaran, 'PAID') ? 'bg-green-100 text-green-800' : 
+                            (#strings.equals(order.statusPembayaran, 'UNPAID') ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'))}">
+                            <span th:text="${#strings.replace(order.statusPembayaran, '_', ' ')}"></span>
+                        </span>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Jumlah Tiket</p>
+                            <p class="font-medium" th:text="${order.quantity}"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Total Harga</p>
+                            <p class="font-medium text-gray-900">
+                                Rp <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div th:if="${order.buktiPembayaran != null}" class="mt-4">
+                        <p class="text-sm text-gray-500">Status Bukti Pembayaran</p>
+                        <p class="text-sm text-green-600 font-medium">Bukti pembayaran telah dikirim</p>
+                    </div>
+
+                    <form>
+                        <input type="hidden" name="orderId" th:value="${order.orderId}" />
+
+                    </form>
+
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <a th:href="@{/user/orders/{id}(id=${order.orderId})}"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Lihat Detail
+                        </a>
+                        <button th:if="${#strings.equals(order.statusPembayaran, 'UNPAID') && order.buktiPembayaran == null}"
+                            onclick="window.location.href='/user/orders/' + this.closest('.bg-white').querySelector('input[name=orderId]').value"
+                            type="button"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90">
+                            Bayar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script layout:fragment="script">
+        var swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            effect: 'slide',
+        });
+    </script>
+</body>
+
+</html>

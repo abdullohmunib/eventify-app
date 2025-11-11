@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+:root{--primary:#0ea5e9;--accent:#6366f1}
+html,body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+
+/* card utilities (for convenience) */
+.card { background: white; border-radius: 12px; box-shadow: 0 6px 20px rgba(2,6,23,0.06); }
+.card-hero { border-radius: 16px; overflow: hidden }
+
+/* subtle entrance animation */
+.fade-in { transform: translateY(6px); opacity: 0; transition: all .5s ease; }
+.fade-in.show { transform: translateY(0); opacity: 1; }
+
+/* event image cover */
+.event-img { height: 180px; width: 100%; object-fit: cover; display: block; }
+
+/* fancy price tag */
+.price-badge { background: linear-gradient(90deg,var(--accent),var(--primary)); color: white; padding: .35rem .6rem; border-radius: 999px; font-weight:600 }
+
+/* sidebar */
+.sidebar { width: 260px; }
+
+/* small responsive tweaks */
+@media (max-width: 768px){ .sidebar{ display:none } }

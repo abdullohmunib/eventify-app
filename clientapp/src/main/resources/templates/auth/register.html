@@ -1,0 +1,80 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/auth}" lang="id">
+
+<head>
+    <title>Daftar</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <h2 class="text-4xl font-bold text-primary">Daftar</h2>
+        <p class="text-black font-semibold text-sm mb-6">
+            Daftar untuk membuat akun baru dan mulai menjelajahi event yang tersedia.
+        </p>
+        <form>
+            <div class="mb-5">
+                <label for="namaLengkap" class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap <span class="text-red-500">*</span></label>
+                <input type="text" id="namaLengkap"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                     />
+            </div>
+
+            <div class="mb-5">
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email <span class="text-red-500">*</span></label>
+                <input type="email" id="email"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                     />
+            </div>
+
+            <div class="mb-5">
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password <span class="text-red-500">*</span> </label>
+                <input type="password" id="password"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                     />
+            </div>
+
+            <button type="submit"
+                class="text-white bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                Daftar
+            </button>
+        </form>
+        <p class="text-sm text-gray-500 mt-4">
+            Sudah memiliki akun? <a th:href="@{/login}" class="text-primary hover:underline">Masuk sekarang</a>
+        </p>
+    </section>
+
+    <script layout:fragment="script">
+        $(document).ready(function () {
+            $("form").on("submit", function (e) {
+                e.preventDefault();
+
+                // Hapus pesan error lama
+                $(".input-error").remove();
+
+                $.ajax({
+                    url: "/auth/register",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        namaLengkap: $("#namaLengkap").val().trim(),
+                        email: $("#email").val().trim(),
+                        password: $("#password").val().trim()
+                    }),
+                    success: function () {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: "Pendaftaran berhasil, silakan login.",
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = "/login";
+                        });
+                    },
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>

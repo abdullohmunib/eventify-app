@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Eventify</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-ticket-alt"></i>
+            <h4>EVENTIFY</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="/dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showEventAlert()">
+                    <i class="fas fa-calendar"></i> My Events
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showTicketAlert()">
+                    <i class="fas fa-ticket-alt"></i> Tickets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/api/auth/logout" onclick="confirmLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h2>Welcome to Eventify, <span th:text="${user}">User</span>!</h2>
+            <p class="mb-0">Your gateway to premium events and unforgettable experiences.</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h4>12</h4>
+                    <p>Events Attending</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>8</h4>
+                    <p>Favorites</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4>5</h4>
+                    <p>Tickets</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h3 class="section-title section-title-dashboard mb-4">Upcoming Events</h3>
+            </div>
+        </div>
+
+        <div class="events-section row">
+            <div class="col-md-4 mb-5">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Concert" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <div class="event-date">Jun 15, 2025</div>
+                        <div class="event-category">Music</div>
+                        <h5 class="card-title">Summer Music Festival</h5>
+                        <p class="card-text">Experience the best of summer with top artists performing live music.</p>
+                        <a href="#" class="btn btn-primary-dashboard w-100" onclick="showEventBookingAlert()">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-5">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Conference" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <div class="event-date">Jul 22, 2025</div>
+                        <div class="event-category">Tech</div>
+                        <h5 class="card-title">Tech Innovation Summit</h5>
+                        <p class="card-text">Join industry leaders to explore the latest in technology.</p>
+                        <a href="#" class="btn btn-primary-dashboard w-100" onclick="showEventBookingAlert()">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-5">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Workshop" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <div class="event-date">Aug 5, 2025</div>
+                        <div class="event-category">Workshop</div>
+                        <h5 class="card-title">Creative Workshop</h5>
+                        <p class="card-text">Develop your creative skills with hands-on learning experiences.</p>
+                        <a href="#" class="btn btn-primary-dashboard w-100" onclick="showEventBookingAlert()">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/panel}" lang="en">
+
+<head>
+    <title>Eventify - Home</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="flex justify-between my-2">
+            <h6 class="text-lg font-semibold">Kelola Event</h6>
+            <button onclick="createCountry()" data-modal-target="createModal" data-modal-toggle="createModal"
+                type="button"
+                class="text-white bg-green-600 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 font-medium rounded-lg text-sm px-4.5 py-2 text-center">
+                Tambah
+            </button>
+        </div>
+
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-6 bg-white space-y-3">
+                <table id="datatables" class="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                No
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Poster
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Judul
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Lokasi
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="rounded-lg" id="countryTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="createModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Tambah Event</h3>
+                        <button type="button" data-modal-hide="createModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <form id="createForm" class="p-4 md:p-5">
+                        <input type="hidden" id="countryId" />
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label for="judul" class="block mb-2 text-sm font-medium text-gray-900">Judul <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="judul"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="tanggalAcara" class="block mb-2 text-sm font-medium text-gray-900">Tanggal
+                                    Acara <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" id="tanggalAcara"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="lokasi" class="block mb-2 text-sm font-medium text-gray-900">Lokasi <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="lokasi"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="hargaTiket" class="block mb-2 text-sm font-medium text-gray-900">Harga
+                                    Tiket <span class="text-red-500">*</span></label>
+                                <input type="number" id="hargaTiket"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="kuotaTotal" class="block mb-2 text-sm font-medium text-gray-900">Kuota <span
+                                        class="text-red-500">*</span></label>
+                                <input type="number" id="kuotaTotal"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="judul" class="block mb-2 text-sm font-medium text-gray-900">Deskripsi <span
+                                        class="text-red-500">*</span></label>
+                                <textarea id="deskripsi" rows="4"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"></textarea>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="posterFile" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Upload Poster Event <span class="text-red-500">*</span>
+                                </label>
+                                <input type="file" id="posterFile" accept="image/*" required
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" />
+                                <p class="mt-1 text-sm text-gray-500">PNG, JPG, JPEG (MAX. 10MB)</p>
+                                <div id="imagePreview" class="mt-2 hidden">
+                                    <img id="previewImg" src="" alt="Preview"
+                                        class="max-w-xs max-h-48 rounded-lg border border-gray-300" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-end">
+                            <button type="submit" id="submitBtn"
+                                class="text-white inline-flex items-center bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <svg id="loadingSpinner" class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span id="submitBtnText">Submit</span>
+                            </button>
+                            <button type="button" data-modal-hide="createModal"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ms-2">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="updateModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Update Event</h3>
+                        <button type="button" data-modal-hide="updateModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <form id="updateForm_update" class="p-4 md:p-5">
+                        <input type="hidden" id="countryId_update" />
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label for="judul_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Judul <span class="text-red-500">*</span></label>
+                                <input type="text" id="judul_update"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="tanggalAcara_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Tanggal Acara <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" id="tanggalAcara_update"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="lokasi_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Lokasi <span class="text-red-500">*</span></label>
+                                <input type="text" id="lokasi_update"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="hargaTiket_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Harga Tiket <span class="text-red-500">*</span></label>
+                                <input type="number" id="hargaTiket_update"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="kuotaTotal_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Kuota <span class="text-red-500">*</span></label>
+                                <input type="number" id="kuotaTotal_update"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="deskripsi_update"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Deskripsi <span class="text-red-500">*</span></label>
+                                <textarea id="deskripsi_update" rows="4"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"></textarea>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="posterFile_update" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Update Poster Event
+                                </label>
+                                <input type="file" id="posterFile_update" accept="image/*"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" />
+                                <p class="mt-1 text-sm text-gray-500">PNG, JPG, JPEG (MAX. 10MB) - Kosongkan jika tidak
+                                    ingin mengubah poster</p>
+                                <div id="currentPoster_update" class="mt-2 hidden">
+                                    <p class="text-sm font-medium text-gray-700 mb-1">Poster Saat Ini:</p>
+                                    <img id="currentPosterImg_update" src="" alt="Current Poster"
+                                        class="max-w-xs max-h-48 rounded-lg border border-gray-300" />
+                                </div>
+                                <div id="imagePreview_update" class="mt-2 hidden">
+                                    <p class="text-sm font-medium text-gray-700 mb-1">Preview Poster Baru:</p>
+                                    <img id="previewImg_update" src="" alt="Preview"
+                                        class="max-w-xs max-h-48 rounded-lg border border-gray-300" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-end">
+                            <button type="submit" id="submitBtn_update"
+                                class="text-white inline-flex items-center bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <svg id="loadingSpinner_update"
+                                    class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span id="submitBtnText_update">Edit</span>
+                            </button>
+                            <button type="button" data-modal-hide="updateModal"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ms-2">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Modal -->
+        <div id="viewModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Detail Event</h3>
+                        <button type="button" data-modal-hide="viewModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-6 text-sm text-gray-700">
+                        <img src="" id="viewPoster" alt="Preview Image">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold w-1/3 text-gray-900">Judul</td>
+                                    <td class="py-2 text-gray-700" id="viewJudul"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Deskripsi</td>
+                                    <td class="py-2 text-gray-700" id="viewDeskripsi"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Tanggal Acara</td>
+                                    <td class="py-2 text-gray-700" id="viewTanggalAcara"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Lokasi</td>
+                                    <td class="py-2 text-gray-700" id="viewLokasi"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Harga Tiket</td>
+                                    <td class="py-2 text-gray-700">Rp <span id="viewHargaTiket"></span></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Kuota</td>
+                                    <td class="py-2 text-gray-700">
+                                        <span id="viewKuotaTersisa"></span> / <span id="viewKuotaTotal"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <!-- Footer -->
+                    <div class="flex justify-end p-4 border-t border-gray-200">
+                        <button type="button" data-modal-hide="viewModal"
+                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script layout:fragment="script">
+        dataTable = new DataTable("#datatables", {
+            scrollX: true,
+            ajax: {
+                url: "/api/admin/events",
+                dataSrc: "",
+            },
+            responsive: true,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    data: "posterUrl",
+                    render: function (data) {
+                        if (data) {
+                            return `<img src="${data}" alt="Poster" class="w-16 h-16 object-cover rounded" />`;
+                        } else {
+                            return `<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No Image</div>`;
+                        }
+                    }
+                },
+                { data: "judul" },
+                { data: "lokasi" },
+                {
+                    data: null,
+                    render: function (data) {
+                        return `
+                             <button data-view-id="${data.eventId}" data-modal-target="viewModal" data-modal-toggle="viewModal"
+                                class="btn-view text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                Detail
+                            </button>
+                            <button data-update-id="${data.eventId}" data-modal-target="updateModal" data-modal-toggle="updateModal"
+                                class="btn-edit text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                Edit
+                            </button>
+                            <button data-delete-id="${data.eventId}" 
+                                class="btn-delete text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                Delete
+                            </button>
+                            `;
+                    },
+                },
+            ],
+            initComplete: function () {
+                if (window.initFlowbite) window.initFlowbite(); // Re-initialize Flowbite
+            },
+
+        });
+
+        $(document).ready(function () {
+            // Preview gambar saat upload - Create Form
+            $("#posterFile").on("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#previewImg").attr("src", e.target.result);
+                        $("#imagePreview").removeClass("hidden");
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $("#imagePreview").addClass("hidden");
+                }
+            });
+
+            // Preview gambar saat upload - Update Form
+            $("#posterFile_update").on("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#previewImg_update").attr("src", e.target.result);
+                        $("#imagePreview_update").removeClass("hidden");
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $("#imagePreview_update").addClass("hidden");
+                }
+            });
+
+            $("#createForm").on("submit", function (e) {
+                e.preventDefault();
+
+                const posterFile = $("#posterFile")[0].files[0];
+                if (!posterFile) {
+                    Swal.fire("Gagal!", "Poster gambar wajib diupload!", "error");
+                    return;
+                }
+
+                // Buat FormData untuk mendukung file upload
+                const formData = new FormData();
+                formData.append("judul", $("#judul").val().trim());
+                formData.append("tanggalAcara", $("#tanggalAcara").val().trim());
+                formData.append("lokasi", $("#lokasi").val().trim());
+                formData.append("hargaTiket", $("#hargaTiket").val().trim());
+                formData.append("deskripsi", $("#deskripsi").val().trim());
+                formData.append("kuotaTotal", $("#kuotaTotal").val().trim());
+                formData.append("posterFile", posterFile);
+
+                $.ajax({
+                    url: "/admin/events",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        dataTable.ajax.reload(null, false);
+
+                        const modalEl = document.getElementById("createModal");
+                        const modal = new window.Modal(modalEl);
+                        modal.hide();
+
+                        // Reset form dan preview
+                        $("#createForm")[0].reset();
+                        $("#imagePreview").addClass("hidden");
+
+                        Swal.fire("Berhasil!", "Event berhasil dibuat dengan poster.", "success");
+                    },
+                    error: function (xhr) {
+                        let errorMsg = "Terjadi kesalahan saat membuat event.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        Swal.fire("Gagal!", errorMsg, "error");
+                    }
+                });
+            });
+
+            let selectedEventId = null;
+
+            $('#datatables').on('click', '[data-update-id]', function () {
+                selectedEventId = $(this).data('update-id');
+                $.ajax({
+                    url: `/api/admin/events/${selectedEventId}`,
+                    method: 'GET',
+                    success: function (data) {
+                        $('#judul_update').val(data.judul);
+                        $('#tanggalAcara_update').val(data.tanggalAcara);
+                        $('#lokasi_update').val(data.lokasi);
+                        $('#hargaTiket_update').val(data.hargaTiket);
+                        $('#kuotaTotal_update').val(data.kuotaTotal);
+                        $('#deskripsi_update').val(data.deskripsi);
+
+                        // Tampilkan poster saat ini jika ada
+                        if (data.posterUrl) {
+                            $('#currentPosterImg_update').attr('src', data.posterUrl);
+                            $('#currentPoster_update').removeClass('hidden');
+                        } else {
+                            $('#currentPoster_update').addClass('hidden');
+                        }
+
+                        // Reset preview baru
+                        $('#imagePreview_update').addClass('hidden');
+                        $('#posterFile_update').val('');
+
+                        // tampilkan modal
+                        const modalEl = document.getElementById('updateModal');
+                        const modal = new window.Modal(modalEl);
+                        modal.show();
+                    }
+                });
+            });
+
+            $('#updateForm_update').on('submit', function (e) {
+                e.preventDefault();
+
+                const posterFile = $("#posterFile_update")[0].files[0];
+
+                const formData = new FormData();
+                formData.append("judul", $("#judul_update").val().trim());
+                formData.append("tanggalAcara", $("#tanggalAcara_update").val().trim());
+                formData.append("lokasi", $("#lokasi_update").val().trim());
+                formData.append("hargaTiket", $("#hargaTiket_update").val().trim());
+                formData.append("deskripsi", $("#deskripsi_update").val().trim());
+                formData.append("kuotaTotal", $("#kuotaTotal_update").val().trim());
+                formData.append("posterFile", posterFile);
+
+                $.ajax({
+                    url: `/admin/events/${selectedEventId}`,
+                    method: 'PUT',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        dataTable.ajax.reload(null, false);
+                        const modalEl = document.getElementById("updateModal");
+                        const modal = new window.Modal(modalEl);
+                        modal.hide();
+                        Swal.fire("Berhasil!", "Event berhasil diperbarui dengan poster baru.", "success");
+                    },
+                    error: function (xhr) {
+                        let errorMsg = "Terjadi kesalahan saat update event.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        Swal.fire("Gagal!", errorMsg, "error");
+                    }
+                });
+            });
+        });
+
+        $('#datatables').on('click', '[data-delete-id]', function () {
+            let id = $(this).data('delete-id');
+            console.log(id)
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Anda tidak akan dapat mengembalikan ini!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!",
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return $.ajax({
+                        url: `/admin/events/${id}`,
+                        type: "DELETE",
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading(),
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Sukses!",
+                            text: "Data berhasil dihapus.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        dataTable.ajax.reload(null, false);
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Delete Failed",
+                        text: error.responseText || "Something went wrong!",
+                    });
+                });
+        });
+
+        $('#datatables').on('click', '[data-view-id]', function () {
+            const eventId = $(this).data('view-id');
+            $.ajax({
+                url: `/api/admin/events/${eventId}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#viewPoster').attr('src', data.posterUrl || '');
+                    $('#viewJudul').text(data.judul || '-');
+                    $('#viewDeskripsi').text(data.deskripsi || '-');
+                    $('#viewTanggalAcara').text(formatDate(data.tanggalAcara));
+                    $('#viewLokasi').text(data.lokasi || '-');
+                    $('#viewHargaTiket').text(data.hargaTiket?.toLocaleString('id-ID') || '0');
+                    $('#viewKuotaTotal').text(data.kuotaTotal || 0);
+                    $('#viewKuotaTersisa').text(data.kuotaTersisa || 0);
+
+                    const modalEl = document.getElementById('viewModal');
+                    const modal = new window.Modal(modalEl);
+                    modal.show();
+                },
+                error: function () {
+                    Swal.fire("Error", "Gagal mengambil data event.", "error");
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

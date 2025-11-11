@@ -1,0 +1,477 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/panel}" lang="en">
+
+<head>
+    <title>Eventify - Kelola User</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="flex justify-between my-2">
+            <h6 class="text-lg font-semibold">Kelola User</h6>
+            <button onclick="createUser()" data-modal-target="createModal" data-modal-toggle="createModal"
+                type="button"
+                class="text-white bg-green-600 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 font-medium rounded-lg text-sm px-4.5 py-2 text-center">
+                Tambah
+            </button>
+        </div>
+
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-6 bg-white space-y-3">
+                <table id="datatables" class="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-6 py-3">No</th>
+                            <th scope="col" class="px-6 py-3">Nama Lengkap</th>
+                            <th scope="col" class="px-6 py-3">Email</th>
+                            <th scope="col" class="px-6 py-3">Role</th>
+                            <th scope="col" class="px-6 py-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="rounded-lg" id="userTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Create Modal -->
+        <div id="createModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Tambah User</h3>
+                        <button type="button" data-modal-hide="createModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <form id="createForm" class="p-4 md:p-5">
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label for="namaLengkap" class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap <span class="text-red-500">*</span></label>
+                                <input type="text" id="namaLengkap" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="email" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password <span class="text-red-500">*</span></label>
+                                <input type="password" id="password" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="role" class="block mb-2 text-sm font-medium text-gray-900">Role <span class="text-red-500">*</span></label>
+                                <select id="role" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <option value="">Pilih Role</option>
+                                    <option value="USER">USER</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-end">
+                            <button type="submit" id="submitBtn"
+                                class="text-white inline-flex items-center bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <svg id="loadingSpinner" class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span id="submitBtnText">Tambah</span>
+                            </button>
+                            <button type="button" data-modal-hide="createModal"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ms-2">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Modal -->
+        <div id="updateModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
+                        <button type="button" data-modal-hide="updateModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <form id="updateForm" class="p-4 md:p-5">
+                        <input type="hidden" id="userId_update" />
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label for="namaLengkap_update" class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap <span class="text-red-500">*</span></label>
+                                <input type="text" id="namaLengkap_update" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="email_update" class="block mb-2 text-sm font-medium text-gray-900">Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="email_update" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="role_update" class="block mb-2 text-sm font-medium text-gray-900">Role <span class="text-red-500">*</span></label>
+                                <select id="role_update" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                    <option value="">Pilih Role</option>
+                                    <option value="USER">USER</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-end">
+                            <button type="submit" id="submitBtn_update"
+                                class="text-white inline-flex items-center bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <svg id="loadingSpinner_update"
+                                    class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span id="submitBtnText_update">Edit</span>
+                            </button>
+                            <button type="button" data-modal-hide="updateModal"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ms-2">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Modal -->
+        <div id="viewModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Detail User</h3>
+                        <button type="button" data-modal-hide="viewModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <div class="p-6 text-sm text-gray-700">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold w-1/3 text-gray-900">Nama Lengkap</td>
+                                    <td class="py-2 text-gray-700" id="viewNamaLengkap"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Email</td>
+                                    <td class="py-2 text-gray-700" id="viewEmail"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Role</td>
+                                    <td class="py-2" id="viewRole"></td>
+                                </tr>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-2 font-semibold text-gray-900">Tanggal Dibuat</td>
+                                    <td class="py-2 text-gray-700" id="viewCreatedAt"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end p-4 border-t border-gray-200">
+                        <button type="button" data-modal-hide="viewModal"
+                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script layout:fragment="script">
+        let dataTable;
+
+        function createUser() {
+            $('#createForm')[0].reset();
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        $(document).ready(function () {
+            dataTable = $("#datatables").DataTable({
+                ajax: {
+                    url: "/api/admin/users",
+                    dataSrc: function (json) {
+                        return json || [];
+                    },
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1;
+                        },
+                    },
+                    { data: "namaLengkap" },
+                    { data: "email" },
+                    {
+                        data: "role",
+                        render: function (data) {
+                            let badgeClass = data === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+                            return '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + badgeClass + '">' + data + '</span>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `
+                                <button data-view-id="${data.id}"
+                                    class="text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                    <i class="fa-solid fa-eye"></i> Lihat
+                                </button>
+                                <button data-edit-id="${data.id}"
+                                    class="text-white bg-yellow-500 hover:bg-yellow-500/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                                <button data-delete-id="${data.id}"
+                                    class="text-white bg-red-600 hover:bg-red-600/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                    <i class="fa-solid fa-trash"></i> Hapus
+                                </button>
+                            `;
+                        },
+                    },
+                ],
+            });
+
+            // Create user
+            $('#createForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData();
+                formData.append('namaLengkap', $('#namaLengkap').val());
+                formData.append('email', $('#email').val());
+                formData.append('password', $('#password').val());
+                formData.append('role', $('#role').val());
+
+                $('#submitBtn').prop('disabled', true);
+                $('#loadingSpinner').removeClass('hidden');
+                $('#submitBtnText').text('Menyimpan...');
+
+                $.ajax({
+                    url: '/admin/users',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'User berhasil ditambahkan.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('[data-modal-hide="createModal"]').click();
+                        dataTable.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        let errorMsg = 'Terjadi kesalahan';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMsg = response.message || errorMsg;
+                        } catch (e) {
+                            console.error(e);
+                        }
+                        Swal.fire('Error', errorMsg, 'error');
+                    },
+                    complete: function () {
+                        $('#submitBtn').prop('disabled', false);
+                        $('#loadingSpinner').addClass('hidden');
+                        $('#submitBtnText').text('Tambah');
+                    }
+                });
+            });
+
+            // View user
+            $('#datatables').on('click', '[data-view-id]', function () {
+                const userId = $(this).data('view-id');
+                $.ajax({
+                    url: `/api/admin/users/${userId}`,
+                    method: 'GET',
+                    success: function (data) {
+                        $('#viewNamaLengkap').text(data.namaLengkap || '-');
+                        $('#viewEmail').text(data.email || '-');
+                        
+                        let badgeClass = data.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+                        $('#viewRole').html('<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' + badgeClass + '">' + data.role + '</span>');
+                        
+                        $('#viewCreatedAt').text(formatDate(data.createdAt));
+
+                        const modalEl = document.getElementById('viewModal');
+                        const modal = new window.Modal(modalEl);
+                        modal.show();
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Gagal mengambil data user.", "error");
+                    }
+                });
+            });
+
+            // Edit user
+            $('#datatables').on('click', '[data-edit-id]', function () {
+                const userId = $(this).data('edit-id');
+                $.ajax({
+                    url: `/api/admin/users/${userId}`,
+                    method: 'GET',
+                    success: function (data) {
+                        $('#userId_update').val(data.id);
+                        $('#namaLengkap_update').val(data.namaLengkap);
+                        $('#email_update').val(data.email);
+                        $('#role_update').val(data.role);
+
+                        const modalEl = document.getElementById('updateModal');
+                        const modal = new window.Modal(modalEl);
+                        modal.show();
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Gagal mengambil data user.", "error");
+                    }
+                });
+            });
+
+            // Update user
+            $('#updateForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const userId = $('#userId_update').val();
+                const formData = new FormData();
+                formData.append('namaLengkap', $('#namaLengkap_update').val());
+                formData.append('email', $('#email_update').val());
+                formData.append('role', $('#role_update').val());
+
+                $('#submitBtn_update').prop('disabled', true);
+                $('#loadingSpinner_update').removeClass('hidden');
+                $('#submitBtnText_update').text('Menyimpan...');
+
+                $.ajax({
+                    url: `/admin/users/${userId}`,
+                    type: 'PUT',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'User berhasil diupdate.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('[data-modal-hide="updateModal"]').click();
+                        dataTable.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        let errorMsg = 'Terjadi kesalahan';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMsg = response.message || errorMsg;
+                        } catch (e) {
+                            console.error(e);
+                        }
+                        Swal.fire('Error', errorMsg, 'error');
+                    },
+                    complete: function () {
+                        $('#submitBtn_update').prop('disabled', false);
+                        $('#loadingSpinner_update').addClass('hidden');
+                        $('#submitBtnText_update').text('Edit');
+                    }
+                });
+            });
+
+            // Delete user
+            $('#datatables').on('click', '[data-delete-id]', function () {
+                let id = $(this).data('delete-id');
+                Swal.fire({
+                    title: "Hapus User?",
+                    text: "Data user akan dihapus permanen.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#ef4444",
+                    cancelButtonColor: "#6b7280",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal",
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        return $.ajax({
+                            url: `/admin/users/${id}`,
+                            type: "DELETE",
+                        }).catch(function (error) {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error.responseJSON?.message || error.statusText || 'Terjadi kesalahan'}`
+                            );
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading(),
+                })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil!",
+                                text: "User berhasil dihapus.",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                            dataTable.ajax.reload(null, false);
+                        }
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>

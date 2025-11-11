@@ -1,0 +1,305 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/panel}" lang="en">
+
+<head>
+    <title>Eventify - Kelola E-Ticket</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="flex justify-between my-2">
+            <h6 class="text-lg font-semibold">Kelola E-Ticket</h6>
+        </div>
+
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-6 bg-white space-y-3">
+                <table id="datatables" class="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-6 py-3">No</th>
+                            <th scope="col" class="px-6 py-3">Kode Unik</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3">Tanggal Dibuat</th>
+                            <th scope="col" class="px-6 py-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="rounded-lg" id="ticketTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- View Modal -->
+        <div id="viewModal" tabindex="-1" aria-hidden="true"
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-3xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Detail E-Ticket</h3>
+                        <button type="button" data-modal-hide="viewModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <div class="p-4 md:p-5">
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Kode Unik</label>
+                                <p id="viewKodeUnik" class="text-gray-700 font-mono text-lg"></p>
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                                <span id="viewStatus"></span>
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tanggal Dibuat</label>
+                                <p id="viewCreatedAt" class="text-gray-700"></p>
+                            </div>
+                            <div class="col-span-2 flex justify-center mt-4">
+                                <div class="text-center">
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">QR Code</label>
+                                    <img id="viewQRCode" src="" alt="QR Code" class="w-48 h-48 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" data-modal-hide="viewModal"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script layout:fragment="script">
+        let dataTable;
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        $(document).ready(function () {
+            dataTable = $("#datatables").DataTable({
+                ajax: {
+                    url: "/api/admin/etickets",
+                    dataSrc: function (json) {
+                        return json || [];
+                    },
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1;
+                        },
+                    },
+                    { 
+                        data: "kodeUnik",
+                        render: function (data) {
+                            return '<span class="font-mono text-sm">' + data + '</span>';
+                        }
+                    },
+                    {
+                        data: "statusCheckIn",
+                        render: function (data) {
+                            let badgeClass = '';
+                            let badgeText = '';
+                            
+                            switch (data) {
+                                case 'NOT_USED':
+                                    badgeClass = 'bg-blue-100 text-blue-800';
+                                    badgeText = 'BELUM DIGUNAKAN';
+                                    break;
+                                case 'USED':
+                                    badgeClass = 'bg-green-100 text-green-800';
+                                    badgeText = 'SUDAH DIGUNAKAN';
+                                    break;
+                                default:
+                                    badgeClass = 'bg-gray-100 text-gray-800';
+                                    badgeText = data;
+                            }
+                            
+                            return '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + badgeClass + '">' + badgeText + '</span>';
+                        }
+                    },
+                    {
+                        data: "createdAt",
+                        render: function (data) {
+                            return formatDate(data);
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            let actions = `
+                                <button data-view-id="${data.ticketId}"
+                                    class="text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                    <i class="fa-solid fa-eye"></i> Lihat
+                                </button>
+                            `;
+                            
+                            if (data.statusCheckIn === 'NOT_USED') {
+                                actions += `
+                                    <button data-use-id="${data.ticketId}"
+                                        class="text-white bg-green-600 hover:bg-green-600/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                        <i class="fa-solid fa-check"></i> Gunakan
+                                    </button>
+                                `;
+                            }
+
+                            if (data.statusCheckIn === 'USED') {
+                                actions += `
+                                    <button data-unuse-id="${data.ticketId}"
+                                        class="text-white bg-red-600 hover:bg-red-600/90 focus:outline-none focus:ring-2 focus:primary font-medium rounded-lg text-xs px-3 py-1.5 text-center me-1 mb-1">
+                                        <i class="fa-solid fa-undo"></i> Kembalikan
+                                    </button>
+                                `;
+                            }
+                            
+                            return actions;
+                        },
+                    },
+                ],
+            });
+
+            // View ticket detail
+            $('#datatables').on('click', '[data-view-id]', function () {
+                const ticketId = $(this).data('view-id');
+                $.ajax({
+                    url: `/api/admin/etickets/${ticketId}`,
+                    method: 'GET',
+                    success: function (response) {
+                        const data = response;
+                        $('#viewKodeUnik').text(data.kodeUnik || '-');
+                        $('#viewCreatedAt').text(formatDate(data.createdAt));
+                        
+                        // Status badge
+                        let badgeClass = '';
+                        let badgeText = '';
+                        switch (data.statusCheckIn) {
+                            case 'NOT_USED':
+                                badgeClass = 'bg-blue-100 text-blue-800';
+                                badgeText = 'BELUM DIGUNAKAN';
+                                break;
+                            case 'USED':
+                                badgeClass = 'bg-green-100 text-green-800';
+                                badgeText = 'SUDAH DIGUNAKAN';
+                                break;
+                        }
+                        $('#viewStatus').html('<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' + badgeClass + '">' + badgeText + '</span>');
+
+                        // QR Code
+                        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(data.kodeUnik);
+                        $('#viewQRCode').attr('src', qrUrl);
+
+                        const modalEl = document.getElementById('viewModal');
+                        const modal = new window.Modal(modalEl);
+                        modal.show();
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Gagal mengambil data e-ticket.", "error");
+                    }
+                });
+            });
+
+            // Use ticket
+            $('#datatables').on('click', '[data-use-id]', function () {
+                let id = $(this).data('use-id');
+                Swal.fire({
+                    title: "Gunakan E-Ticket?",
+                    text: "Status e-ticket akan diubah menjadi SUDAH DIGUNAKAN.",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#10b981",
+                    cancelButtonColor: "#6b7280",
+                    confirmButtonText: "Ya, Gunakan!",
+                    cancelButtonText: "Batal",
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        return $.ajax({
+                            url: `/admin/etickets/${id}/use`,
+                            type: "PATCH",
+                        }).catch(function(error) {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error.responseJSON?.message || error.statusText || 'Terjadi kesalahan'}`
+                            );
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading(),
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: "E-ticket berhasil digunakan.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        dataTable.ajax.reload(null, false);
+                    }
+                });
+            });
+
+            // Unuse ticket
+            $('#datatables').on('click', '[data-unuse-id]', function () {
+                let id = $(this).data('unuse-id');
+                Swal.fire({
+                    title: "Kembalikan Status E-Ticket?",
+                    text: "Status e-ticket akan dikembalikan menjadi BELUM DIGUNAKAN.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#eab308",
+                    cancelButtonColor: "#6b7280",
+                    confirmButtonText: "Ya, Kembalikan!",
+                    cancelButtonText: "Batal",
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        return $.ajax({
+                            url: `/admin/etickets/${id}/unuse`,
+                            type: "PATCH",
+                        }).catch(function(error) {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error.responseJSON?.message || error.statusText || 'Terjadi kesalahan'}`
+                            );
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading(),
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: "Status e-ticket berhasil dikembalikan.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        dataTable.ajax.reload(null, false);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
